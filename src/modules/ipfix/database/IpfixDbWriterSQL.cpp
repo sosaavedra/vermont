@@ -377,9 +377,11 @@ void IpfixDbWriterSQL::fillInsertRow(IpfixRecord::SourceID* sourceID,
 	for(vector<Column>::iterator col = tableColumns.begin(); col != tableColumns.end(); col++) {
 		// Reset parsedData after each iteration
 		char **parsedData = &values[colNum];
+                msg(MSG_INFO, "Line 379: Iteration (%d), Value of *parsedData: %s", col, *parsedData);
 
 		if (col->ipfixId == EXPORTERID) {
 			*parsedData = strdup(boost::str(boost::format("%d") % getExporterID(sourceID)).c_str());
+                        msg(MSG_INFO, "Line 383: Iteration (%d), Value of *parsedData: %s", col, *parsedData);
 			break;
 		} else {
 			// try to gather data required for the field
@@ -389,6 +391,7 @@ void IpfixDbWriterSQL::fillInsertRow(IpfixRecord::SourceID* sourceID,
 				if(dataTemplateInfo->fieldInfo[k].type.enterprise == col->enterprise && dataTemplateInfo->fieldInfo[k].type.id == col->ipfixId) {
 					parseIpfixData(dataTemplateInfo->fieldInfo[k].type,(data+dataTemplateInfo->fieldInfo[k].offset), parsedData);
 					DPRINTF("IpfixDbWriter::parseIpfixData: really saw ipfix id %d (%s) in packet with parsedData %llX, type %d, length %d and offset %X", col->ipfixId, ipfix_id_lookup(col->ipfixId, col->enterprise)->name, parsedData, dataTemplateInfo->fieldInfo[k].type.id, dataTemplateInfo->fieldInfo[k].type.length, dataTemplateInfo->fieldInfo[k].offset);
+                                        msg(MSG_INFO, "Line 393: Iteration (%d), Value of *parsedData: %s", col, *parsedData);
 					break;
 				}
 			}
@@ -397,6 +400,7 @@ void IpfixDbWriterSQL::fillInsertRow(IpfixRecord::SourceID* sourceID,
 				for(k=0; k < dataTemplateInfo->dataCount; k++) {
 					if(dataTemplateInfo->dataInfo[k].type.enterprise == col->enterprise && dataTemplateInfo->dataInfo[k].type.id == col->ipfixId) {
 						parseIpfixData(dataTemplateInfo->dataInfo[k].type,(dataTemplateInfo->data+dataTemplateInfo->dataInfo[k].offset), parsedData);
+                                                msg(MSG_INFO, "Line 402: Iteration (%d), Value of *parsedData: %s", col, *parsedData);
 						break;
 					}
 				}
@@ -404,11 +408,13 @@ void IpfixDbWriterSQL::fillInsertRow(IpfixRecord::SourceID* sourceID,
 			// check for time-related alternative fields in the database
 			if (*parsedData == 0) {
 				checkTimeAlternatives(&(*col), dataTemplateInfo, data, parsedData);
+                                msg(MSG_INFO, "Line 410: Iteration (%d), Value of *parsedData: %s", col, *parsedData);
 			}
 
 			// get default value if nothing found until now
 			if (*parsedData == 0) {
 					*parsedData = strdup(boost::lexical_cast<std::string>(col->defaultValue).c_str());
+                                        msg(MSG_INFO, "Line 416: Iteration (%d), Value of *parsedData: %s", col, *parsedData);
 			}
 
 			// we need to extract the flow start time for determining the correct DB table
@@ -416,6 +422,7 @@ void IpfixDbWriterSQL::fillInsertRow(IpfixRecord::SourceID* sourceID,
 				switch (col->ipfixId) {
 					case IPFIX_TYPEID_flowStartSeconds:
 						// save time for table access
+                                                msg(MSG_INFO, "Line 424: Iteration (%d), Value of *parsedData: %s", col, *parsedData);
 						flowstart = boost::lexical_cast<uint64_t>(*parsedData) * 1000;
 						break;
 
@@ -474,6 +481,7 @@ void IpfixDbWriterSQL::checkTimeAlternatives(Column* col, TemplateInfo* dataTemp
 	if(col->enterprise == 0) {
 		switch (col->ipfixId) {
 			case IPFIX_TYPEID_flowStartSeconds:
+                                msg(MSG_INFO, "Line 483 IPFIX_TYPEID_flowStartSeconds");
 				for(k=0; k < dataTemplateInfo->fieldCount; k++) {
 					// look for alternative (flowStartMilliseconds/1000)
 					if(dataTemplateInfo->fieldInfo[k].type.id == IPFIX_TYPEID_flowStartMilliseconds) {
@@ -488,6 +496,7 @@ void IpfixDbWriterSQL::checkTimeAlternatives(Column* col, TemplateInfo* dataTemp
 				}
 				break;
 			case IPFIX_TYPEID_flowStartMilliseconds:
+                                msg(MSG_INFO, "Line 498 IPFIX_TYPEID_flowStartMilliseconds");
 				for(k=0; k < dataTemplateInfo->fieldCount; k++) {
 					// look for alternative (flowStartSeconds*1000)
 					if(dataTemplateInfo->fieldInfo[k].type.id == IPFIX_TYPEID_flowStartSeconds) {
@@ -502,6 +511,7 @@ void IpfixDbWriterSQL::checkTimeAlternatives(Column* col, TemplateInfo* dataTemp
 				}
 				break;
 			case IPFIX_TYPEID_flowEndSeconds:
+                                msg(MSG_INFO, "Line 513 IPFIX_TYPEID_flowEndSeconds");
 				for(k=0; k < dataTemplateInfo->fieldCount; k++) {
 					// look for alternative (flowEndMilliseconds/1000)
 					if(dataTemplateInfo->fieldInfo[k].type.id == IPFIX_TYPEID_flowEndMilliseconds) {
@@ -516,6 +526,7 @@ void IpfixDbWriterSQL::checkTimeAlternatives(Column* col, TemplateInfo* dataTemp
 				}
 				break;
 			case IPFIX_TYPEID_flowEndMilliseconds:
+                                msg(MSG_INFO, "Line 528 IPFIX_TYPEID_flowEndMilliseconds");
 				for(k=0; k < dataTemplateInfo->fieldCount; k++) {
 					// look for alternative (flowEndSeconds*1000)
 					if(dataTemplateInfo->fieldInfo[k].type.id == IPFIX_TYPEID_flowEndSeconds) {
@@ -533,6 +544,7 @@ void IpfixDbWriterSQL::checkTimeAlternatives(Column* col, TemplateInfo* dataTemp
 	} else if (col->enterprise == IPFIX_PEN_reverse) {
 		switch (col->ipfixId) {
 			case IPFIX_TYPEID_flowStartSeconds:
+                                msg(MSG_INFO, "Line 546 IPFIX_TYPEID_flowStartSeconds");
 				// look for alternative (revFlowStartMilliseconds/1000)
 				for(k=0; k < dataTemplateInfo->fieldCount; k++) {
 					if(dataTemplateInfo->fieldInfo[k].type == InformationElement::IeInfo(IPFIX_TYPEID_flowStartMilliseconds, IPFIX_PEN_reverse)) {
@@ -542,6 +554,7 @@ void IpfixDbWriterSQL::checkTimeAlternatives(Column* col, TemplateInfo* dataTemp
 				}
 			break;
 			case IPFIX_TYPEID_flowStartMilliseconds:
+                                msg(MSG_INFO, "Line 556 IPFIX_TYPEID_flowStartMilliseconds");
 				// look for alternative (revFlowStartSeconds*1000)
 				for(k=0; k < dataTemplateInfo->fieldCount; k++) {
 					if(dataTemplateInfo->fieldInfo[k].type == InformationElement::IeInfo(IPFIX_TYPEID_flowStartSeconds, IPFIX_PEN_reverse)) {
@@ -551,6 +564,7 @@ void IpfixDbWriterSQL::checkTimeAlternatives(Column* col, TemplateInfo* dataTemp
 				}
 				break;
 			case IPFIX_TYPEID_flowEndSeconds:
+                                msg(MSG_INFO, "Line 566 IPFIX_TYPEID_flowEndSeconds");
 				// look for alternative (revFlowEndMilliseconds/1000)
 				for(k=0; k < dataTemplateInfo->fieldCount; k++) {
 					if(dataTemplateInfo->fieldInfo[k].type == InformationElement::IeInfo(IPFIX_TYPEID_flowEndMilliseconds, IPFIX_PEN_reverse)) {
@@ -560,6 +574,7 @@ void IpfixDbWriterSQL::checkTimeAlternatives(Column* col, TemplateInfo* dataTemp
 				}
 				break;
 			case IPFIX_TYPEID_flowEndMilliseconds:
+                                msg(MSG_INFO, "Line 576 IPFIX_TYPEID_flowEndMilliseconds");
 				// look for alternative (revFlowEndSeconds*1000)
 				for(k=0; k < dataTemplateInfo->fieldCount; k++) {
 					if(dataTemplateInfo->fieldInfo[k].type == InformationElement::IeInfo(IPFIX_TYPEID_flowEndSeconds, IPFIX_PEN_reverse)) {
