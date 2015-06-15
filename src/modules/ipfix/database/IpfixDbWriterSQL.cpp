@@ -584,14 +584,13 @@ void IpfixDbWriterSQL::parseUintAndScale(TemplateInfo::FieldInfo fieldInfo, Ipfi
 		// Creates dataype with 50 decimal digits and int64_t as exponent.
 		typedef boost::multiprecision::number<boost::multiprecision::cpp_dec_float<50, int64_t> > cpp_dec_int64;
 
-		cpp_dec_int64 tmpDecInt64 = (boost::lexical_cast<cpp_dec_int64>(*parsedData) * factor);
+		cpp_dec_int64 tmpDecInt64 = boost::lexical_cast<cpp_dec_int64>(*parsedData) * factor;
 
 		// Converts cpp_dec_float into a string without scientific notation
 		string tmpData = tmpDecInt64.str(ios_base::fixed);
 
 		// Checks if value contains decimals
 		size_t pos = tmpData.find_first_of(".");
-
 
 		// Remove decimals, if any
 		if(pos != string::npos){
