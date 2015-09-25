@@ -19,17 +19,17 @@
  */
 
 #include "modules/packet/filter/PacketFilterCfg.h"
-#include "modules//AnonymizerCfg.h"
+#include "modules/AnonymizerCfg.h"
 #include "core/InfoElementCfg.h"
 
-#include <modules/packet/filter//RegExFilter.h>
-#include <modules/packet/filter//StringFilter.h>
-#include <modules/packet/filter//SystematicSampler.h>
-#include <modules/packet/filter//StateConnectionFilter.h>
-#include <modules/packet/filter//ConnectionFilter.h>
-#include <modules/packet/filter//AnonFilter.h>
-#include <modules/packet/filter//PayloadFilter.h>
-#include <modules/packet/filter//HostFilter.h>
+#include <modules/packet/filter/RegExFilter.h>
+#include <modules/packet/filter/StringFilter.h>
+#include <modules/packet/filter/SystematicSampler.h>
+#include <modules/packet/filter/StateConnectionFilter.h>
+#include <modules/packet/filter/ConnectionFilter.h>
+#include <modules/packet/filter/AnonFilter.h>
+#include <modules/packet/filter/PayloadFilter.h>
+#include <modules/packet/filter/HostFilter.h>
 
 #include "common/msg.h"
 #include <netdb.h>

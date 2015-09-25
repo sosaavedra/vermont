@@ -24,7 +24,7 @@
 #include "core/SensorManager.h"
 
 #include "core/XMLElement.h"
-#include "core//Cfg.h"
+#include "core/Cfg.h"
 
 #include <string>
 

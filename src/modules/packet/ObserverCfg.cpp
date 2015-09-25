@@ -22,7 +22,7 @@
 #include "common/msg.h"
 #include "core/XMLElement.h"
 
-#include "modules/packet//Observer.h"
+#include "modules/packet/Observer.h"
 
 #include <string>
 #include <vector>

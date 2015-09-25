@@ -18,49 +18,19 @@
  *
  */
 
-#ifndef OBSERVERCFG_H_
-#define OBSERVERCFG_H_
+#ifndef DPDKDISTRIBUTOR_HPP
+#define	DPDKDISTRIBUTOR_HPP
 
-#include <libxml/parser.h>
-#include <libxml/tree.h>
 
-#include <core/XMLElement.h>
-#include <core/Cfg.h>
-
-#include <modules/packet/Observer.h>
-
-#include <core/InstanceManager.h>
-#include <map>
-
-class Observer;
-
-class ObserverCfg
-	: public CfgHelper<Observer, ObserverCfg>
+class DpdkDistributor
 {
 public:
-	friend class ConfigManager;
+    DpdkDistributor ();
+    virtual ~DpdkDistributor();
 
-	virtual ObserverCfg* create(XMLElement* e);
+    virtual bool equalTo(DpdkDistributor* other);
 
-	virtual ~ObserverCfg();
-
-	virtual Observer* createInstance();
-
-	virtual bool deriveFrom(ObserverCfg* old);
-
-protected:
-	ObserverCfg(XMLElement*);
-
-private:
-	// config variables
-	std::string interface;	// also used for filename in offline mode
-	std::string pcap_filter;
-	unsigned int capture_len;
-	bool offline;
-	bool replaceOfflineTimestamps;
-	bool offlineAutoExit;
-	float offlineSpeed;
-	uint64_t maxPackets;
 };
 
-#endif /*OBSERVERCFG_H_*/
+#endif	/* DPDKDISTRIBUTOR_HPP */
+

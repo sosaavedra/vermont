@@ -56,9 +56,10 @@
 #include "modules/analysis/AutoFocusCfg.h"
 #include "modules/analysis/FlowLenAnalyzerCfg.h"
 #include "modules/idmef/IDMEFExporterCfg.h"
-#include "modules/idmef//PacketIDMEFReporterCfg.h"
+#include "modules/idmef/PacketIDMEFReporterCfg.h"
 #include "modules/analysis/P2PDetectorCfg.h"
 #include "modules/analysis/HostStatisticsCfg.h"
+#include "modules/dpdk/DpdkCfg.hpp"
 
 #include <cassert>
 
@@ -109,6 +110,9 @@ Cfg* ConfigManager::configModules[] = {
 	new IpfixFlowInspectorExporterCfg(NULL),
 #endif
 	new FlowLenAnalyzerCfg(NULL),
+#ifdef SUPPORT_DPDK_ENABLED
+	new DpdkCfg(NULL),
+#endif
 };
 
 ConfigManager::ConfigManager()

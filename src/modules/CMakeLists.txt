@@ -120,6 +120,7 @@ ADD_LIBRARY(modules
     ipfix/database/IpfixDbReaderOracle.cpp
     ipfix/database/IpfixFlowInspectorExporterCfg.cpp
     ipfix/database/IpfixFlowInspectorExporter.cpp
-)
+    dpdk/DpdkCfg.cpp
+    dpdk/Dpdk.cpp)
 
 
